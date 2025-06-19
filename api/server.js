@@ -25,12 +25,16 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// ✅ Middlewares essentiels
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // Pour le JSON
+app.use(express.urlencoded({ extended: true })); // Pour le x-www-form-urlencoded
 
+// ✅ Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/characters', require('./routes/characters'));
 
+// ✅ Lancement du serveur
 app.listen(3000, () => {
     console.log('REST API running on port 3000');
 });
