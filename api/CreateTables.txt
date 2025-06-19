@@ -1,0 +1,30 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE active_sessions (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    session_token VARCHAR(255) NOT NULL,
+    login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE characters (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    slot INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    class VARCHAR(20) NOT NULL,
+    level INT DEFAULT 1,
+    experience INT DEFAULT 0,
+    position_x FLOAT DEFAULT 0,
+    position_y FLOAT DEFAULT 0,
+    position_z FLOAT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

@@ -29,8 +29,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/auth', require('./routes/auth'));
-//app.use('/player', require('./routes/player'));
-//app.use('/inventory', require('./routes/inventory'));
+app.use('/characters', require('./routes/characters'));
 
 app.listen(3000, () => {
     console.log('REST API running on port 3000');
