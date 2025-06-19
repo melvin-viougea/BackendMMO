@@ -4,13 +4,13 @@ const pool = require('../db'); // connexion à la BDD
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_jwt';
 
-function validateToken(token) {
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        return decoded.user_id;
-    } catch (err) {
-        return null;
-    }
+async function validateToken(token) {
+    const result = await pool.query(
+        'SELECT user_id FROM active_sessions WHERE session_token = $1',
+        [token]
+    );
+    if (result.rows.length === 0) return null;
+    return result.rows[0].user_id;
 }
 
 /**
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
         });
     }
 
-    const user_id = validateToken(token);
+    const user_id = await validateToken(token);
 
     if (!user_id) {
         return res.status(401).json({
@@ -57,13 +57,11 @@ router.post('/', async (req, res) => {
         );
 
         const characters = result.rows;
-        const character_count = characters.length;
-
         return res.json({
             status: 'success',
             characters,
-            has_characters: character_count > 0,
-            character_count
+            has_characters: characters.length > 0,
+            character_count: characters.length
         });
     } catch (err) {
         console.error(err);
